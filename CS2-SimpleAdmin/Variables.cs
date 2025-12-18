@@ -79,6 +79,10 @@ public partial class CS2_SimpleAdmin
 
     // Timers
     internal Timer? PlayersTimer = null;
+
+    // Cache refresh control
+    internal static DateTime _lastCacheRefresh = DateTime.MinValue;
+    internal static readonly SemaphoreSlim _cacheRefreshSemaphore = new(1, 1);
     
     // Funny list
     private readonly List<string> _requiredPlugins = ["MenuManagerCore", "PlayerSettings"];

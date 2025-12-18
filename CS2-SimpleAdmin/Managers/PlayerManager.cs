@@ -51,6 +51,21 @@ internal class PlayerManager
             try
             {
                 await _loadPlayerSemaphore.WaitAsync();
+
+                await CS2_SimpleAdmin._cacheRefreshSemaphore.WaitAsync();
+                try
+                {
+                    if ((Time.ActualDateTime() - CS2_SimpleAdmin._lastCacheRefresh).TotalSeconds > 2)
+                    {
+                        await CS2_SimpleAdmin.Instance.CacheManager.RefreshCacheAsync();
+                        CS2_SimpleAdmin._lastCacheRefresh = Time.ActualDateTime();
+                    }
+                }
+                finally
+                {
+                    CS2_SimpleAdmin._cacheRefreshSemaphore.Release();
+                }
+
                 if (!CS2_SimpleAdmin.PlayersInfo.ContainsKey(steamId))
                 {
                     var isBanned = CS2_SimpleAdmin.Instance.Config.OtherSettings.BanType switch
